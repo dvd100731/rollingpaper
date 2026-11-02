@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>윤수 생일 롤링페이퍼</title>
+<meta name="description" content="김윤수의 생일을 함께 축하해 주세요! 축하 메시지를 남겨 주세요.">
+<!-- 카톡 공유 미리보기 문구 -->
+<meta property="og:title" content="🎂 김윤수의 생일을 축하해!">
+<meta property="og:description" content="링크 열고 축하 한마디 남겨줘 🐶💌">
+<meta name="theme-color" content="#FFE76A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+<script>
+/* ███████████████████████████████████████████████████████████████████████
+   ██                                                                   ██
+   ██   🔥 여기에 내 Firebase 설정값(firebaseConfig)을 붙여 넣으세요 🔥    ██
+   ██                                                                   ██
+   ██   Firebase 콘솔 → 프로젝트 설정 → 내 앱 → "SDK 설정 및 구성"에서     ██
+   ██   보이는 firebaseConfig = { ... } 안의 값을 그대로 복사해           ██
+   ██   아래 "여기에_..." 부분을 바꾸면 끝!                                ██
+   ██                                                                   ██
+   ██   ※ 값을 넣기 전에는 '미리보기 모드'로 작동합니다.                   ██
+   ██     (이 기기 브라우저에만 저장 + 예시 메시지 3개)                     ██
+   ██                                                                   ██
+   ███████████████████████████████████████████████████████████████████████ */
+const firebaseConfig = {
+  apiKey: "AIzaSyBfHoW4cswbbiIm07EinqWYVqwQznJPf-U",
+  authDomain: "yun-birthday.firebaseapp.com",
+  projectId: "yun-birthday",
+  storageBucket: "yun-birthday.firebasestorage.app",
+  messagingSenderId: "924811143557",
+  appId: "1:924811143557:web:df3230100ab71a41977cec"
+};
+/* ████████████████████████ 설정값은 여기까지 ████████████████████████ */
+
+/* 주인공 정보 — 바꾸고 싶으면 여기만 고치면 돼요 */
+const BIRTHDAY_NAME = "김윤수";
+const BIRTHDAY_MONTH = 11;  // 월
+const BIRTHDAY_DAY = 5;     // 일
+</script>
+
+<style>
+:root{
+  --yellow:#FFF3A8; --pink:#FFD3E0; --peach:#FFE0C7; --mint:#D3F2E2; --sky:#D5E9FF;
+  --bg:#FFFBEA; --bg-dot:#FFE3EC;
+  --ink:#4A3A35; --ink-soft:#8A7670;
+  --accent:#FF7FA3; --accent-deep:#E85B86; --sun:#FFE76A;
+  --line:#F1E3D3; --white:#fff;
+  --shadow:0 2px 0 rgba(74,58,53,.06), 0 8px 18px -8px rgba(160,90,80,.35);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100dvh;
+  background-color:var(--bg);
+  background-image:radial-gradient(var(--bg-dot) 1.6px, transparent 1.7px);
+  background-size:22px 22px;
+  color:var(--ink);
+  font-family:"Gowun Dodum", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+/* ---------- 헤더 ---------- */
+header{
+  position:relative;z-index:2;
+  text-align:center;
+  padding:calc(28px + env(safe-area-inset-top)) 16px 8px;
+}
+.pups{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin-bottom:6px}
+.pups svg{width:58px;height:58px}
+.pups svg:nth-child(2){width:72px;height:72px;--ear:#8C6A55}
+.pups svg:nth-child(1){animation:bob 2.4s ease-in-out infinite}
+.pups svg:nth-child(3){animation:bob 2.4s ease-in-out .6s infinite;--ear:#E3B07E}
+@keyframes bob{50%{transform:translateY(-5px) rotate(-4deg)}}
+.date-chip{
+  display:inline-block;font-family:"Jua",sans-serif;font-size:14px;
+  background:var(--white);border:2px dashed var(--accent);color:var(--accent-deep);
+  padding:4px 12px;border-radius:999px;
+}
+h1{
+  font-family:"Jua",sans-serif;font-weight:400;
+  font-size:clamp(28px, 8.4vw, 46px);line-height:1.2;
+  margin:12px 0 10px;letter-spacing:-.5px;word-break:keep-all;
+}
+h1 .who{
+  background:linear-gradient(transparent 58%, var(--sun) 58%, var(--sun) 92%, transparent 92%);
+  padding:0 4px;
+}
+h1 .cake{display:inline-block;animation:wiggle 3s ease-in-out infinite}
+@keyframes wiggle{0%,80%,100%{transform:rotate(0)}85%{transform:rotate(-12deg)}90%{transform:rotate(10deg)}95%{transform:rotate(-6deg)}}
+.count{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--white);border-radius:999px;padding:8px 16px;
+  box-shadow:var(--shadow);font-size:15px;
+}
+.count b{font-family:"Jua",sans-serif;font-weight:400;font-size:20px;color:var(--accent-deep)}
+
+/* ---------- 보드 ---------- */
+main{position:relative;z-index:2;max-width:1040px;margin:0 auto;padding:22px 16px 140px}
+.board{
+  display:grid;gap:22px 16px;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+}
+@media (min-width:640px){.board{grid-template-columns:repeat(3, minmax(0,1fr));gap:28px 22px}}
+@media (min-width:960px){.board{grid-template-columns:repeat(4, minmax(0,1fr))}}
+
+.note{
+  --tilt:0deg;
+  position:relative;display:flex;flex-direction:column;
+  min-height:150px;padding:22px 14px 12px;
+  border:0;border-radius:4px 4px 16px 4px;text-align:left;
+  box-shadow:var(--shadow);
+  transform:rotate(var(--tilt));
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.note::before{ /* 마스킹 테이프 */
+  content:"";position:absolute;top:-9px;left:50%;width:58px;height:18px;
+  transform:translateX(-50%) rotate(-3deg);
+  background:rgba(255,255,255,.62);border-radius:2px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.note:hover{transform:rotate(0) scale(1.03)}
+.note:active{transform:rotate(0) scale(.98)}
+.note:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.note .msg{
+  flex:1;margin:0;font-family:"Gaegu",cursive;font-size:19px;line-height:1.35;
+  white-space:pre-wrap;word-break:break-word;
+  display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;
+}
+.note .from{
+  margin-top:10px;align-self:flex-end;
+  font-family:"Jua",sans-serif;font-size:16px;
+  background:rgba(255,255,255,.7);padding:3px 10px;border-radius:999px;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.note .from span{color:var(--accent-deep)}
+.note.pop{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.4) rotate(-12deg);opacity:0}}
+
+.c-yellow{background:var(--yellow)} .c-pink{background:var(--pink)}
+.c-peach{background:var(--peach)}   .c-mint{background:var(--mint)}
+.c-sky{background:var(--sky)}
+
+.empty{text-align:center;color:var(--ink-soft);padding:40px 0;font-size:16px}
+.empty svg{width:90px;height:90px;display:block;margin:0 auto 8px}
+
+.mode{
+  text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:34px;
+}
+.mode i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#C9B8B0;margin-right:5px;vertical-align:1px}
+.mode.live i{background:#3CC47C;box-shadow:0 0 0 3px rgba(60,196,124,.2)}
+
+/* ---------- 글쓰기 버튼 ---------- */
+.fab{
+  position:fixed;z-index:5;
+  left:50%;transform:translateX(-50%);
+  bottom:calc(18px + env(safe-area-inset-bottom));
+  white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+  border:0;border-radius:999px;padding:14px 20px 14px 16px;
+  background:var(--accent);color:#fff;
+  font-family:"Jua",sans-serif;font-size:18px;
+  box-shadow:0 6px 0 var(--accent-deep), 0 12px 24px -6px rgba(232,91,134,.55);
+  transition:transform .12s, box-shadow .12s;
+}
+.fab:active{transform:translate(-50%, 4px);box-shadow:0 2px 0 var(--accent-deep), 0 6px 14px -6px rgba(232,91,134,.55)}
+.fab .plus{
+  display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+  background:#fff;color:var(--accent-deep);font-size:22px;line-height:1;
+}
+
+/* ---------- 모달 공통 ---------- */
+dialog{
+  width:min(520px, calc(100vw - 32px));max-height:calc(100dvh - 40px);
+  padding:0;border:0;background:transparent;color:inherit;overflow:visible;
+}
+dialog::backdrop{background:rgba(74,58,53,.42);backdrop-filter:blur(3px)}
+dialog[open]{animation:grow .32s cubic-bezier(.25,1.3,.5,1)}
+@keyframes grow{from{transform:scale(.7);opacity:0}}
+.sheet{
+  position:relative;background:var(--white);border-radius:24px;
+  padding:24px 20px 20px;max-height:calc(100dvh - 40px);overflow:auto;
+  box-shadow:0 20px 50px -12px rgba(74,58,53,.45);
+}
+.x{
+  position:absolute;top:10px;right:10px;width:40px;height:40px;
+  border:0;border-radius:50%;background:rgba(255,255,255,.75);font-size:22px;line-height:1;
+}
+.x:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sheet h2{font-family:"Jua",sans-serif;font-weight:400;font-size:24px;margin:0 0 16px;display:flex;align-items:center;gap:8px}
+.sheet h2 svg{width:38px;height:38px}
+
+/* 글쓰기 폼 */
+.field{margin-bottom:16px}
+.field > label, .field > .label{display:block;font-size:14px;color:var(--ink-soft);margin-bottom:6px}
+.field input[type=text], .field input[type=password], .field textarea{
+  width:100%;border:2px solid var(--line);border-radius:14px;
+  padding:12px 14px;font-size:16px;background:#fff;outline:none;
+  transition:border-color .15s, background-color .2s;
+}
+.field input:focus, .field textarea:focus{border-color:var(--accent)}
+.field textarea{
+  min-height:150px;resize:vertical;
+  font-family:"Gaegu",cursive;font-size:20px;line-height:1.4;
+}
+.hint{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-top:5px}
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swatches label{position:relative}
+.swatches input{position:absolute;opacity:0;inset:0;margin:0}
+.swatches span{
+  display:block;width:42px;height:42px;border-radius:12px;
+  border:2px solid rgba(74,58,53,.12);transition:transform .15s;
+}
+.swatches input:checked + span{transform:scale(1.1);border:3px solid var(--ink);box-shadow:0 0 0 3px #fff inset}
+.swatches input:focus-visible + span{outline:3px solid var(--accent);outline-offset:2px}
+.pw input{letter-spacing:8px;font-family:"Jua",sans-serif;max-width:180px}
+.err{min-height:20px;color:#D2365E;font-size:14px;margin:0 0 10px}
+
+.btn{
+  border:0;border-radius:14px;padding:14px 18px;font-family:"Jua",sans-serif;font-size:18px;
+  background:var(--accent);color:#fff;box-shadow:0 4px 0 var(--accent-deep);width:100%;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn[disabled]{opacity:.6;pointer-events:none}
+.btn.ghost{background:#fff;color:var(--ink-soft);box-shadow:0 0 0 2px var(--line) inset;font-family:inherit;font-size:15px;padding:10px 14px;width:auto}
+.btn.danger{background:#FF6B7F;box-shadow:0 4px 0 #D2365E;width:auto;font-size:16px;padding:10px 16px}
+
+/* 상세 보기 */
+#viewDlg .sheet{border-radius:6px 6px 26px 6px;padding:34px 22px 20px}
+.full-msg{
+  font-family:"Gaegu",cursive;font-size:23px;line-height:1.5;
+  white-space:pre-wrap;word-break:break-word;margin:0 0 20px;
+}
+.full-from{
+  text-align:right;font-family:"Jua",sans-serif;font-size:22px;
+}
+.full-from span{color:var(--accent-deep)}
+.full-date{text-align:right;font-size:13px;color:var(--ink-soft);margin-top:2px}
+.del-area{margin-top:22px;padding-top:14px;border-top:2px dashed rgba(74,58,53,.15)}
+.del-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.del-row input{
+  width:120px;border:2px solid rgba(74,58,53,.15);border-radius:12px;padding:10px 12px;
+  font-size:16px;letter-spacing:6px;background:rgba(255,255,255,.8);outline:none;
+}
+.del-row input:focus{border-color:var(--accent)}
+
+/* 토스트 */
+.toast{
+  position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));z-index:20;
+  transform:translate(-50%, 20px);opacity:0;pointer-events:none;
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;
+  transition:opacity .25s, transform .25s;max-width:calc(100vw - 32px);text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- 강아지 그림 (여러 곳에서 재사용) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pup" viewBox="0 0 64 64">
+    <ellipse cx="14" cy="27" rx="9" ry="15" fill="var(--ear, #C98F5E)" transform="rotate(22 14 27)"/>
+    <ellipse cx="50" cy="27" rx="9" ry="15" fill="var(--ear, #C98F5E)" transform="rotate(-22 50 27)"/>
+    <circle cx="32" cy="35" r="20" fill="#FFF3E2"/>
+    <ellipse cx="32" cy="43" rx="10" ry="7.5" fill="#fff"/>
+    <circle cx="24" cy="32" r="2.7" fill="#3B2A20"/>
+    <circle cx="40" cy="32" r="2.7" fill="#3B2A20"/>
+    <circle cx="25" cy="31" r=".9" fill="#fff"/>
+    <circle cx="41" cy="31" r=".9" fill="#fff"/>
+    <ellipse cx="32" cy="39.5" rx="3.4" ry="2.4" fill="#3B2A20"/>
+    <path d="M28 43.5q4 4 8 0" stroke="#3B2A20" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M30.5 45.5q1.5 3.5 3 0z" fill="#FF8FA8"/>
+    <circle cx="18.5" cy="39" r="2.8" fill="#FFB4C2" opacity=".85"/>
+    <circle cx="45.5" cy="39" r="2.8" fill="#FFB4C2" opacity=".85"/>
+  </symbol>
+  <symbol id="pup-hat" viewBox="0 0 64 64">
+    <use href="#pup"/>
+    <path d="M32 2 L41 18 L23 18 Z" fill="#FF7FA3"/>
+    <path d="M27 12 L29 16 M33 8 L35 14" stroke="#FFE76A" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="32" cy="3" r="3" fill="#FFE76A"/>
+  </symbol>
+</svg>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<header>
+  <div class="pups" aria-hidden="true">
+    <svg><use href="#pup"/></svg>
+    <svg><use href="#pup-hat"/></svg>
+    <svg><use href="#pup"/></svg>
+  </div>
+  <span class="date-chip" id="dateChip">11월 5일</span>
+  <h1><span class="who" id="heroName">김윤수</span>의 생일을 축하해! <span class="cake" aria-hidden="true">🎂</span></h1>
+  <div class="count" aria-live="polite">💌 지금까지 <b id="count">0</b>명의 친구가 마음을 남겼어요</div>
+</header>
+
+<main>
+  <section class="board" id="board" aria-label="축하 메시지 목록"></section>
+  <div class="empty" id="empty" hidden>
+    <svg aria-hidden="true"><use href="#pup"/></svg>
+    아직 메시지가 없어요.<br>첫 번째로 축하해 줄래요?
+  </div>
+  <p class="mode" id="mode"><i></i>불러오는 중…</p>
+</main>
+
+<button class="fab" id="fab" type="button">
+  축하 남기기 <span class="plus" aria-hidden="true">+</span>
+</button>
+
+<!-- 글쓰기 모달 -->
+<dialog id="writeDlg" aria-labelledby="writeTitle">
+  <form class="sheet" id="writeForm" novalidate>
+    <button class="x" type="button" data-close aria-label="닫기">×</button>
+    <h2 id="writeTitle"><svg aria-hidden="true"><use href="#pup-hat"/></svg>축하 한마디 남기기</h2>
+
+    <div class="field">
+      <label for="fName">작성자 이름 (닉네임)</label>
+      <input type="text" id="fName" maxlength="20" autocomplete="nickname" placeholder="예: 김윤수의 두 번째 전여친 69세 김춘자 여사">
+    </div>
+
+    <div class="field">
+      <label for="fMsg">축하 메시지</label>
+      <textarea id="fMsg" maxlength="500"></textarea>
+      <div class="hint"><span>줄바꿈도 그대로 보여요</span><span><span id="msgLen">0</span>/500</span></div>
+    </div>
+
+    <div class="field">
+      <span class="label" id="colorLabel">포스트잇 색깔</span>
+      <div class="swatches" role="radiogroup" aria-labelledby="colorLabel" id="swatches"></div>
+    </div>
+
+    <div class="field pw">
+      <label for="fPw">삭제용 비밀번호 (숫자 4자리)</label>
+      <input type="password" id="fPw" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+      <div class="hint"><span>잘못 썼을 때 이 번호로 지울 수 있어요</span></div>
+    </div>
+
+    <p class="err" id="writeErr" role="alert"></p>
+    <button class="btn" id="submitBtn" type="submit">붙이기 💌</button>
+  </form>
+</dialog>
+
+<!-- 상세 보기 모달 -->
+<dialog id="viewDlg" aria-labelledby="viewFrom">
+  <div class="sheet" id="viewSheet">
+    <button class="x" type="button" data-close aria-label="닫기">×</button>
+    <p class="full-msg" id="viewMsg"></p>
+    <div class="full-from" id="viewFrom"></div>
+    <div class="full-date" id="viewDate"></div>
+
+    <div class="del-area">
+      <button class="btn ghost" type="button" id="delToggle">내가 쓴 글 지우기</button>
+      <form class="del-row" id="delForm" hidden>
+        <label class="sr-only" for="delPw">삭제 비밀번호</label>
+        <input type="password" id="delPw" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+        <button class="btn danger" type="submit">삭제</button>
+        <button class="btn ghost" type="button" id="delCancel">취소</button>
+      </form>
+      <p class="err" id="delErr" role="alert"></p>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+/* ============ 기본 설정 ============ */
+const COLORS = [
+  { key: "yellow", name: "레몬" },
+  { key: "pink",   name: "딸기우유" },
+  { key: "peach",  name: "복숭아" },
+  { key: "mint",   name: "민트" },
+  { key: "sky",    name: "하늘" },
+];
+const COLOR_KEYS = COLORS.map(c => c.key);
+const LOCAL_KEY = "rollingpaper-v1";
+const FIREBASE_VER = "10.12.2";
+
+const $ = id => document.getElementById(id);
+const isConfigured = Object.values(firebaseConfig).every(v => v && !String(v).startsWith("여기에"));
+
+/* ============ 헤더 (이름 · 날짜 · D-day) ============ */
+$("heroName").textContent = BIRTHDAY_NAME;
+document.title = `${BIRTHDAY_NAME} 생일 롤링페이퍼`;
+(() => {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let bday = new Date(today.getFullYear(), BIRTHDAY_MONTH - 1, BIRTHDAY_DAY);
+  if (bday < today) bday = new Date(today.getFullYear() + 1, BIRTHDAY_MONTH - 1, BIRTHDAY_DAY);
+  const diff = Math.round((bday - today) / 86400000);
+  const label = `${BIRTHDAY_MONTH}월 ${BIRTHDAY_DAY}일`;
+  $("dateChip").textContent = diff === 0 ? `${label} · 오늘이야! 🎉` : `${label} · D-${diff}`;
+})();
+
+/* ============ 비밀번호 해시 (원문 저장 안 함) ============ */
+async function hashPw(pw) {
+  const text = "rollingpaper::" + pw;
+  if (window.crypto?.subtle) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+  let h = 5381; for (const ch of text) h = ((h << 5) + h + ch.charCodeAt(0)) >>> 0;
+  return "djb2-" + h.toString(16);
+}
+
+/* ============ 저장소 1: 미리보기 모드 (LocalStorage) ============ */
+function createLocalStore() {
+  const listeners = new Set();
+  const read = () => {
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY)) ?? null; } catch { return null; }
+  };
+  let memory = null; // localStorage가 막힌 환경(일부 미리보기)용
+  const load = () => read() ?? memory ?? [];
+  const save = list => {
+    memory = list;
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(list)); } catch {}
+    listeners.forEach(cb => cb(sorted(list)));
+  };
+  const sorted = list => [...list].sort((a, b) => b.ts - a.ts);
+
+  // 같은 기기 다른 탭에서 쓴 글도 반영
+  addEventListener("storage", e => { if (e.key === LOCAL_KEY) listeners.forEach(cb => cb(sorted(load()))); });
+
+  return {
+    live: false,
+    async subscribe(cb) { listeners.add(cb); cb(sorted(load())); },
+    async add(doc) { save([...load(), { id: "l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...doc }]); },
+    async remove(id) { save(load().filter(m => m.id !== id)); },
+  };
+}
+
+/* ============ 저장소 2: 실시간 모드 (Firebase Firestore) ============ */
+async function createFirebaseStore() {
+  const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VER}`;
+  const [{ initializeApp }, fs] = await Promise.all([
+    import(`${base}/firebase-app.js`),
+    import(`${base}/firebase-firestore.js`),
+  ]);
+  const db = fs.getFirestore(initializeApp(firebaseConfig));
+  const col = fs.collection(db, "messages");
+  return {
+    live: true,
+    subscribe(cb, onError) {
+      fs.onSnapshot(fs.query(col, fs.orderBy("ts", "desc")),
+        snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+        onError);
+    },
+    add: doc => fs.addDoc(col, doc),
+    remove: id => fs.deleteDoc(fs.doc(db, "messages", id)),
+  };
+}
+
+/* ============ 화면 그리기 ============ */
+let messages = [];
+let knownIds = null;
+let store;
+
+function tiltFor(id) {
+  let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) | 0;
+  return ((Math.abs(h) % 7) - 3) * 1.1; // -3.3° ~ +3.3°
+}
+const safeColor = c => COLOR_KEYS.includes(c) ? c : "yellow";
+
+function render(list) {
+  messages = list;
+  const board = $("board");
+  const fresh = knownIds ? list.filter(m => !knownIds.has(m.id)).map(m => m.id) : [];
+  knownIds = new Set(list.map(m => m.id));
+
+  board.replaceChildren(...list.map(m => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `note c-${safeColor(m.color)}` + (fresh.includes(m.id) ? " pop" : "");
+    card.style.setProperty("--tilt", tiltFor(m.id) + "deg");
+    card.dataset.id = m.id;
+
+    const p = document.createElement("p");
+    p.className = "msg";
+    p.textContent = m.message;
+
+    const from = document.createElement("div");
+    from.className = "from";
+    from.append("From. ");
+    const nm = document.createElement("span");
+    nm.textContent = m.name;
+    from.append(nm);
+
+    card.setAttribute("aria-label", `${m.name}님의 메시지 크게 보기`);
+    card.append(p, from);
+    return card;
+  }));
+
+  $("count").textContent = list.length;
+  $("empty").hidden = list.length > 0;
+  if (fresh.length) burst();
+
+  // 보고 있던 글이 삭제되면 상세창 닫기
+  if ($("viewDlg").open && !list.some(m => m.id === viewingId)) $("viewDlg").close();
+}
+
+function setMode(live) {
+  const el = $("mode");
+  el.classList.toggle("live", live);
+  el.lastChild.textContent = live
+    ? "실시간 연결됨 · 친구들 글이 바로바로 보여요"
+    : "미리보기 모드 · 이 기기에만 저장돼요 (Firebase 설정 전)";
+}
+
+/* ============ 토스트 ============ */
+let toastTimer;
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+/* ============ 모달 공통 ============ */
+document.querySelectorAll("dialog").forEach(dlg => {
+  dlg.addEventListener("click", e => {
+    if (e.target === dlg || e.target.closest("[data-close]")) dlg.close();
+  });
+});
+
+/* ============ 글쓰기 ============ */
+const swatches = $("swatches");
+COLORS.forEach((c, i) => {
+  const label = document.createElement("label");
+  label.innerHTML = `<input type="radio" name="color" value="${c.key}" ${i === 0 ? "checked" : ""}><span class="c-${c.key}"></span>`;
+  label.title = c.name;
+  label.querySelector("input").setAttribute("aria-label", c.name);
+  swatches.append(label);
+});
+const fMsg = $("fMsg");
+const paintTextarea = () => {
+  const c = swatches.querySelector("input:checked").value;
+  fMsg.style.backgroundColor = `var(--${c})`;
+};
+swatches.addEventListener("change", paintTextarea);
+paintTextarea();
+fMsg.addEventListener("input", () => $("msgLen").textContent = fMsg.value.length);
+$("fPw").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4));
+$("delPw").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4));
+
+$("fab").addEventListener("click", () => {
+  $("writeErr").textContent = "";
+  $("writeDlg").showModal();
+  setTimeout(() => $("fName").focus(), 50);
+});
+
+$("writeForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = $("fName").value.trim();
+  const message = fMsg.value.trim();
+  const pw = $("fPw").value;
+  const color = swatches.querySelector("input:checked").value;
+  const err = $("writeErr");
+
+  if (!name) { err.textContent = "이름을 적어 주세요 🐶"; $("fName").focus(); return; }
+  if (!message) { err.textContent = "축하 메시지를 적어 주세요 💌"; fMsg.focus(); return; }
+  if (!/^\d{4}$/.test(pw)) { err.textContent = "삭제용 비밀번호는 숫자 4자리예요"; $("fPw").focus(); return; }
+
+  const btn = $("submitBtn");
+  btn.disabled = true; btn.textContent = "붙이는 중…"; err.textContent = "";
+  try {
+    await store.add({ name: name.slice(0, 20), message: message.slice(0, 500), color, pwHash: await hashPw(pw), ts: Date.now() });
+    $("writeForm").reset(); $("msgLen").textContent = "0"; paintTextarea();
+    $("writeDlg").close();
+    toast("축하 메시지를 붙였어요! 🎉");
+  } catch (ex) {
+    console.error(ex);
+    err.textContent = "저장에 실패했어요. 인터넷 연결이나 Firebase 설정을 확인해 주세요.";
+  } finally {
+    btn.disabled = false; btn.textContent = "붙이기 💌";
+  }
+});
+
+/* ============ 상세 보기 & 삭제 ============ */
+let viewingId = null;
+$("board").addEventListener("click", e => {
+  const card = e.target.closest(".note");
+  if (!card) return;
+  const m = messages.find(x => x.id === card.dataset.id);
+  if (!m) return;
+  viewingId = m.id;
+  $("viewSheet").className = `sheet c-${safeColor(m.color)}`;
+  $("viewMsg").textContent = m.message;
+  const from = $("viewFrom");
+  from.replaceChildren("From. ", Object.assign(document.createElement("span"), { textContent: m.name }));
+  const d = new Date(m.ts);
+  $("viewDate").textContent = isNaN(d) ? "" :
+    `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  $("delForm").hidden = true; $("delToggle").hidden = false; $("delErr").textContent = ""; $("delPw").value = "";
+  $("viewDlg").showModal();
+});
+
+$("delToggle").addEventListener("click", () => {
+  $("delToggle").hidden = true; $("delForm").hidden = false; $("delPw").focus();
+});
+$("delCancel").addEventListener("click", () => {
+  $("delForm").hidden = true; $("delToggle").hidden = false; $("delErr").textContent = "";
+});
+$("delForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const m = messages.find(x => x.id === viewingId);
+  const pw = $("delPw").value;
+  if (!m) return;
+  if (!/^\d{4}$/.test(pw)) { $("delErr").textContent = "숫자 4자리를 입력해 주세요"; return; }
+  if (await hashPw(pw) !== m.pwHash) { $("delErr").textContent = "비밀번호가 달라요 🥲"; $("delPw").select(); return; }
+  try {
+    await store.remove(m.id);
+    $("viewDlg").close();
+    toast("메시지를 지웠어요");
+  } catch (ex) {
+    console.error(ex);
+    $("delErr").textContent = "삭제에 실패했어요. 잠시 후 다시 시도해 주세요.";
+  }
+});
+
+/* ============ 꽃가루 (Confetti) ============ */
+const cv = $("confetti"), ctx = cv.getContext("2d");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PALETTE = ["#FF7FA3", "#FFE76A", "#FFC2D4", "#9FD4FF", "#A8E6C6", "#FFB680"];
+let pieces = [];
+function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
+function piece(fromTop) {
+  return {
+    x: Math.random() * innerWidth,
+    y: fromTop ? -20 - Math.random() * innerHeight * .3 : Math.random() * innerHeight,
+    s: 5 + Math.random() * 6, vy: .6 + Math.random() * 1.2, sway: Math.random() * Math.PI * 2,
+    rot: Math.random() * Math.PI, vr: (Math.random() - .5) * .1,
+    c: PALETTE[(Math.random() * PALETTE.length) | 0], round: Math.random() < .35, extra: false,
+  };
+}
+function burst() {
+  if (reduceMotion) return;
+  for (let i = 0; i < 70; i++) pieces.push({ ...piece(true), vy: 2 + Math.random() * 2.5, extra: true });
+}
+function tick() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  for (const p of pieces) {
+    p.y += p.vy; p.sway += .03; p.x += Math.sin(p.sway) * .7; p.rot += p.vr;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c; ctx.globalAlpha = .85;
+    if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 7); ctx.fill(); }
+    else ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+    ctx.restore();
+  }
+  pieces = pieces.filter(p => !(p.extra && p.y > innerHeight + 20));
+  for (const p of pieces) if (p.y > innerHeight + 20) Object.assign(p, piece(true));
+  requestAnimationFrame(tick);
+}
+if (!reduceMotion) {
+  resize(); addEventListener("resize", resize);
+  const n = innerWidth < 640 ? 38 : 60;
+  for (let i = 0; i < n; i++) pieces.push(piece(false));
+  tick();
+}
+
+/* ============ 시작 ============ */
+async function start() {
+  if (isConfigured) {
+    try {
+      store = await createFirebaseStore();
+      store.subscribe(render, ex => {
+        console.error(ex);
+        toast("Firebase 연결 오류 — 규칙(Rules) 설정을 확인해 주세요");
+      });
+      setMode(true);
+      return;
+    } catch (ex) {
+      console.error(ex);
+      toast("Firebase 연결 실패 — 미리보기 모드로 실행해요");
+    }
+  }
+  store = createLocalStore();
+  setMode(false);
+  await store.subscribe(render);
+}
+start();
+</script>
+</body>
+</html>
