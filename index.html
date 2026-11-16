@@ -690,5 +690,71 @@ async function start() {
 }
 start();
 </script>
+<!-- 추가 기능: 기존 메시지 저장·렌더링 코드는 그대로 유지합니다. -->
+<style>
+.paper-tools{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin-bottom:12px}
+.paper-tools label{display:grid;gap:6px;font-size:14px}
+.paper-tools .paper-search{flex:1 1 220px}
+.paper-tools input,.paper-tools select,.paper-tools button{
+  min-height:44px;border:1px solid var(--line);border-radius:12px;
+  padding:10px 12px;background:var(--white);color:var(--ink);font:inherit;
+}
+.paper-tools input{width:100%;min-width:0}
+.paper-tools input::placeholder{color:var(--ink);opacity:.75}
+.paper-tools button:hover{background:var(--yellow)}
+.paper-tools :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.paper-results{margin:0 0 24px;font-size:14px;line-height:1.6;color:var(--ink)}
+#board .note[hidden]{display:none}
+</style>
+<script>
+(() => {
+  const board = document.getElementById("board");
+  const tools = document.createElement("section");
+  tools.className = "paper-tools";
+  tools.setAttribute("aria-label", "메시지 찾기");
+  tools.innerHTML = `
+    <label class="paper-search">이름·내용 검색
+      <input id="paperSearch" type="search" placeholder="찾고 싶은 이름이나 단어" aria-controls="board">
+    </label>
+    <label>포스트잇 색상
+      <select id="paperColor" aria-controls="board">
+        <option value="">모든 색상</option><option value="yellow">노랑</option>
+        <option value="pink">분홍</option><option value="peach">복숭아</option>
+        <option value="mint">민트</option><option value="sky">하늘</option>
+      </select>
+    </label>
+    <button id="paperReset" type="button">검색 초기화</button>`;
+  const result = document.createElement("p");
+  result.className = "paper-results";
+  result.setAttribute("role", "status");
+  board.before(tools, result);
+  const search = tools.querySelector("input");
+  const color = tools.querySelector("select");
+  function filterCards() {
+    const query = search.value.trim().normalize("NFC").toLocaleLowerCase();
+    const cards = [...board.querySelectorAll(".note")];
+    let visible = 0;
+    for (const card of cards) {
+      const content = [card.querySelector(".msg"), card.querySelector(".from span")]
+        .map(node => node?.textContent || "").join(" ").normalize("NFC").toLocaleLowerCase();
+      card.hidden = !(content.includes(query) && (!color.value || card.classList.contains(`c-${color.value}`)));
+      if (!card.hidden) visible++;
+    }
+    const filtering = Boolean(query || color.value);
+    result.hidden = !filtering;
+    result.textContent = !filtering ? "" : visible
+      ? `전체 ${cards.length}개 중 ${visible}개의 메시지를 찾았어요.`
+      : "조건에 맞는 메시지가 없어요. 검색어나 색상을 바꿔 보세요.";
+  }
+  search.addEventListener("input", filterCards);
+  color.addEventListener("change", filterCards);
+  tools.querySelector("button").addEventListener("click", () => {
+    search.value = ""; color.value = ""; filterCards(); search.focus();
+  });
+  // 실시간 새 글과 삭제 후에도 현재 검색 조건을 유지합니다.
+  new MutationObserver(filterCards).observe(board, { childList: true });
+  filterCards();
+})();
+</script>
 </body>
 </html>
