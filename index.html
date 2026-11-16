@@ -702,6 +702,7 @@ start();
 .paper-tools input{width:100%;min-width:0}
 .paper-tools input::placeholder{color:var(--ink);opacity:.75}
 .paper-tools button:hover{background:var(--yellow)}
+.paper-tools button:disabled{opacity:.6;cursor:wait}
 .paper-tools :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .paper-results{margin:0 0 24px;font-size:14px;line-height:1.6;color:var(--ink)}
 #board .note[hidden]{display:none}
@@ -754,6 +755,64 @@ start();
   // 실시간 새 글과 삭제 후에도 현재 검색 조건을 유지합니다.
   new MutationObserver(filterCards).observe(board, { childList: true });
   filterCards();
+})();
+</script>
+<script>
+(() => {
+  const tools = document.querySelector(".paper-tools");
+  const share = document.createElement("button");
+  share.type = "button";
+  share.id = "paperShare";
+  share.textContent = "롤링페이퍼 공유";
+  const status = document.createElement("p");
+  status.className = "paper-results";
+  status.setAttribute("role", "status");
+  status.hidden = true;
+  const manual = document.createElement("input");
+  manual.type = "text";
+  manual.readOnly = true;
+  manual.setAttribute("aria-label", "공유할 링크 (복사해서 보내 주세요)");
+  manual.hidden = true;
+  tools.append(share, manual);
+  tools.after(status);
+  function announce(message) {
+    status.hidden = !message;
+    status.textContent = message;
+  }
+  share.addEventListener("click", async () => {
+    manual.hidden = true;
+    announce("");
+    if (!["http:", "https:"].includes(location.protocol) ||
+        ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) {
+      announce("친구에게 공유하려면 배포된 사이트에서 열어 주세요.");
+      return;
+    }
+    // 검색어·개인 정보가 포함될 수 있는 URL 매개변수는 공유하지 않습니다.
+    const url = new URL(location.pathname, location.origin).href;
+    const title = document.querySelector("h1").textContent.trim();
+    share.disabled = true;
+    try {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+          announce("공유를 마쳤어요.");
+          return;
+        } catch (error) {
+          if (error.name === "AbortError") return;
+        }
+      }
+      await navigator.clipboard.writeText(url);
+      announce("링크를 복사했어요. 친구에게 붙여넣어 보내 주세요.");
+    } catch {
+      manual.value = url;
+      manual.hidden = false;
+      manual.focus();
+      manual.select();
+      announce("자동 복사가 안 돼요. 선택된 링크를 직접 복사해 주세요.");
+    } finally {
+      share.disabled = false;
+    }
+  });
 })();
 </script>
 </body>

@@ -15,6 +15,7 @@ const assert = require('node:assert/strict');
   });
   try {
     const page = await browser.newPage({ viewport: { width: 375, height: 812 }, reducedMotion: 'reduce' });
+    page.setDefaultTimeout(10000);
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.route('**/*', route => {
@@ -25,6 +26,8 @@ const assert = require('node:assert/strict');
     });
     await page.goto('http://localhost:4173/');
     await page.getByText('미리보기 모드 · 이 기기에만 저장돼요 (Firebase 설정 전)').waitFor();
+    await page.locator('#paperShare').click();
+    await page.getByText('친구에게 공유하려면 배포된 사이트에서 열어 주세요.').waitFor();
     const visible = () => page.locator('#board .note:visible').count();
     async function add(name, message, color) {
       await page.locator('#fab').click();
@@ -45,7 +48,7 @@ const assert = require('node:assert/strict');
     assert.equal(await visible(), 1);
     await page.locator('#paperColor').selectOption('mint');
     assert.equal(await visible(), 0);
-    assert.match(await page.locator('.paper-results').innerText(), /조건에 맞는 메시지가 없어요/);
+    await page.getByText('조건에 맞는 메시지가 없어요. 검색어나 색상을 바꿔 보세요.', { exact: true }).waitFor();
     await page.locator('#paperReset').click();
     assert.equal(await visible(), 3);
     assert.equal(await page.locator('#paperSearch').evaluate(el => el === document.activeElement), true);
@@ -75,7 +78,49 @@ const assert = require('node:assert/strict');
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.screenshot({ path: path.join(process.env.TEMP, 'rollingpaper-desktop.png'), fullPage: true });
     assert.deepEqual(errors, []);
-    console.log('PASS: search, combined color filter, reset/focus, live render preservation, create/detail/password/delete/reload, 4 viewport widths, no page errors');
+    for (const scenario of ['native', 'cancel', 'clipboard', 'fallback', 'denied']) {
+      console.log('Checking sharing:', scenario);
+      const context = await browser.newContext();
+      await context.addInitScript(mode => {
+        window.shareCalls = [];
+        Object.defineProperty(navigator, 'share', { configurable: true, value:
+          ['native', 'cancel', 'denied'].includes(mode) ? async data => {
+            window.shareCalls.push(['native', data]);
+            if (mode === 'cancel') throw new DOMException('Cancelled', 'AbortError');
+            if (mode === 'denied') throw new DOMException('Denied', 'NotAllowedError');
+          } : undefined });
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+          writeText: async text => {
+            if (mode === 'fallback') throw new Error('Clipboard unavailable');
+            window.shareCalls.push(['clipboard', text]);
+          }
+        }});
+      }, scenario);
+      const sharedPage = await context.newPage();
+      sharedPage.setDefaultTimeout(10000);
+      await sharedPage.route('**/*', route => route.fulfill({
+        contentType: 'text/html; charset=utf-8',
+        body: route.request().isNavigationRequest() ? localHtml : ''
+      }));
+      await sharedPage.goto('https://rollingpaper.test/birthday?private=value#section');
+      await sharedPage.locator('#paperShare').click();
+      await sharedPage.waitForFunction(() => !document.querySelector('#paperShare').disabled);
+      const calls = await sharedPage.evaluate(() => window.shareCalls);
+      if (scenario === 'native') {
+        assert.equal(calls[0][1].url, 'https://rollingpaper.test/birthday');
+        assert.match(await sharedPage.locator('.paper-results').first().innerText(), /공유를 마쳤어요/);
+      } else if (scenario === 'cancel') {
+        assert.equal(calls.length, 1);
+        assert.equal(await sharedPage.locator('.paper-tools input[readonly]').isVisible(), false);
+      } else if (scenario === 'fallback') {
+        assert.equal(await sharedPage.locator('.paper-tools input[readonly]').inputValue(), 'https://rollingpaper.test/birthday');
+        assert.equal(await sharedPage.locator('.paper-tools input[readonly]').isVisible(), true);
+      } else {
+        assert.deepEqual(calls.at(-1), ['clipboard', 'https://rollingpaper.test/birthday']);
+      }
+      await context.close();
+    }
+    console.log('PASS: search, combined color filter, reset/focus, live render preservation, create/detail/password/delete/reload, 4 viewport widths, no page errors; sharing native/cancel/clipboard/denied/manual fallback/local guard');
   } finally {
     await browser.close();
   }
