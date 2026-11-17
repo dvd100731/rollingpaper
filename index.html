@@ -690,5 +690,61 @@ async function start() {
 }
 start();
 </script>
+<!-- 작성 중인 내용만 이 탭에 보관합니다. 비밀번호는 저장하지 않습니다. -->
+<script type="module">
+(() => {
+  const key = "rollingpaper-draft-v1";
+  const form = document.getElementById("writeForm");
+  const name = document.getElementById("fName");
+  const message = document.getElementById("fMsg");
+  const swatches = document.getElementById("swatches");
+  const notice = document.createElement("p");
+  notice.id = "draftNotice";
+  notice.className = "hint";
+  notice.setAttribute("role", "status");
+  notice.textContent = "작성 중인 글은 이 탭에 임시 저장돼요. 비밀번호는 저장하지 않아요.";
+  document.getElementById("writeErr").before(notice);
+
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(key));
+    if (draft && typeof draft.name === "string" && typeof draft.message === "string") {
+      name.value = draft.name.slice(0, name.maxLength);
+      message.value = draft.message.slice(0, message.maxLength);
+      const color = [...swatches.querySelectorAll("input")].find(input => input.value === draft.color);
+      if (color) color.checked = true;
+      message.dispatchEvent(new Event("input"));
+      swatches.dispatchEvent(new Event("change"));
+      notice.textContent = "작성 중이던 글을 복구했어요. 삭제용 비밀번호는 다시 입력해 주세요.";
+    }
+  } catch {
+    notice.textContent = "임시 저장 내용을 불러오지 못했어요. 새 글은 계속 작성할 수 있어요.";
+  }
+
+  function saveDraft() {
+    try {
+      if (!name.value && !message.value) sessionStorage.removeItem(key);
+      else sessionStorage.setItem(key, JSON.stringify({
+        name: name.value,
+        message: message.value,
+        color: swatches.querySelector("input:checked")?.value || "yellow"
+      }));
+      notice.textContent = "작성 중인 글은 이 탭에 임시 저장돼요. 비밀번호는 저장하지 않아요.";
+    } catch {
+      notice.textContent = "이 브라우저에서는 임시 저장이 안 돼요. 새로고침 전에 글을 복사해 주세요.";
+    }
+  }
+  name.addEventListener("input", saveDraft);
+  message.addEventListener("input", saveDraft);
+  swatches.addEventListener("change", saveDraft);
+  // 기존 저장 성공 경로의 form.reset() 이후에만 초안을 비웁니다.
+  form.addEventListener("reset", () => {
+    try {
+      sessionStorage.removeItem(key);
+      notice.textContent = "작성 중인 글은 이 탭에 임시 저장돼요. 비밀번호는 저장하지 않아요.";
+    }
+    catch { notice.textContent = "글은 등록됐지만 임시 저장 내용을 지우지 못했어요."; }
+  });
+})();
+</script>
 </body>
 </html>
